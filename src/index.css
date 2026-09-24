@@ -1,0 +1,287 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #090807;
+    --bg-surface: #141311;
+    --bg-surface-elevated: #1e1c18;
+    --border-gold: rgba(212, 175, 55, 0.25);
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --gold-primary: #D4AF37;
+    --gold-bright: #F5D77F;
+    --gold-muted: #AA7C11;
+    --text-main: #EDE8D0;
+    --text-muted: #9E9689;
+
+    /* Theme Engine Variables */
+    --apex-bg: #090807;
+    --apex-card-bg: #14120E;
+    --apex-card-surface: #1C1812;
+    --apex-nav-bg: rgba(18, 16, 12, 0.94);
+    --apex-accent: #D4AF37;
+    --apex-accent-bright: #F5D77F;
+    --apex-accent-muted: #AA7C11;
+    --apex-text: #EDE8D0;
+    --apex-text-muted: #A8A193;
+    --apex-border: rgba(212, 175, 55, 0.28);
+    --apex-glow: rgba(212, 175, 55, 0.35);
+    --apex-gradient-accent: linear-gradient(135deg, #AA7C11 0%, #D4AF37 50%, #F5D77F 100%);
+    --apex-btn-text: #090807;
+  }
+
+  /* Emerald Palette */
+  [data-palette="emerald"] {
+    --apex-bg: #04140E;
+    --apex-card-bg: #0B2219;
+    --apex-card-surface: #112E23;
+    --apex-nav-bg: rgba(11, 34, 25, 0.94);
+    --apex-accent: #10B981;
+    --apex-accent-bright: #6EE7B7;
+    --apex-accent-muted: #047857;
+    --apex-text: #E6FAF1;
+    --apex-text-muted: #80AC9B;
+    --apex-border: rgba(16, 185, 129, 0.3);
+    --apex-glow: rgba(16, 185, 129, 0.35);
+    --apex-gradient-accent: linear-gradient(135deg, #047857 0%, #10B981 50%, #6EE7B7 100%);
+    --apex-btn-text: #04140E;
+  }
+
+  /* Sapphire Palette */
+  [data-palette="sapphire"] {
+    --apex-bg: #050D1C;
+    --apex-card-bg: #0B1B36;
+    --apex-card-surface: #12274D;
+    --apex-nav-bg: rgba(11, 27, 54, 0.94);
+    --apex-accent: #38BDF8;
+    --apex-accent-bright: #93C5FD;
+    --apex-accent-muted: #1D4ED8;
+    --apex-text: #E0F2FE;
+    --apex-text-muted: #7C96B8;
+    --apex-border: rgba(56, 189, 248, 0.3);
+    --apex-glow: rgba(56, 189, 248, 0.35);
+    --apex-gradient-accent: linear-gradient(135deg, #1D4ED8 0%, #38BDF8 50%, #93C5FD 100%);
+    --apex-btn-text: #050D1C;
+  }
+
+  /* Amethyst Palette */
+  [data-palette="amethyst"] {
+    --apex-bg: #13071F;
+    --apex-card-bg: #200E33;
+    --apex-card-surface: #2E1647;
+    --apex-nav-bg: rgba(32, 14, 51, 0.94);
+    --apex-accent: #C084FC;
+    --apex-accent-bright: #F472B6;
+    --apex-accent-muted: #7E22CE;
+    --apex-text: #F5ECFF;
+    --apex-text-muted: #A58AB8;
+    --apex-border: rgba(192, 132, 252, 0.3);
+    --apex-glow: rgba(192, 132, 252, 0.35);
+    --apex-gradient-accent: linear-gradient(135deg, #7E22CE 0%, #C084FC 50%, #F472B6 100%);
+    --apex-btn-text: #13071F;
+  }
+
+  /* Ivory Palette */
+  [data-palette="ivory"] {
+    --apex-bg: #F6F4EE;
+    --apex-card-bg: #FFFFFF;
+    --apex-card-surface: #EFECE3;
+    --apex-nav-bg: rgba(255, 255, 255, 0.95);
+    --apex-accent: #B8933C;
+    --apex-accent-bright: #8C6B13;
+    --apex-accent-muted: #6B4E0A;
+    --apex-text: #1E293B;
+    --apex-text-muted: #64748B;
+    --apex-border: rgba(184, 147, 60, 0.32);
+    --apex-glow: rgba(184, 147, 60, 0.25);
+    --apex-gradient-accent: linear-gradient(135deg, #8C6B13 0%, #B8933C 50%, #E5C158 100%);
+    --apex-btn-text: #FFFFFF;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--apex-bg, #090807);
+    color: var(--apex-text, #EDE8D0);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  /* Safe area padding for iPhone 16 Pro Max notch and home indicator bar */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 24px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 44px);
+  }
+}
+
+/* Custom Serif Typography */
+.font-display {
+  font-family: 'Cinzel', serif;
+}
+.font-serif-luxury {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* Dynamic Palette Theme Overrides */
+html[data-palette] body,
+html[data-palette] #root,
+html[data-palette] .apex-app-root {
+  background-color: var(--apex-bg) !important;
+  color: var(--apex-text) !important;
+}
+
+/* Base surface overrides for non-gold palettes */
+html[data-palette]:not([data-palette="gold"]) .apex-app-root {
+  background-color: var(--apex-bg) !important;
+}
+
+/* Card surfaces across dashboard, habits, goals, calendar, modals */
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#14120E]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#100E0A]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#15130E]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#181612]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#0C1C16]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#0F172A]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#1C1129]"] {
+  background-color: var(--apex-card-bg) !important;
+}
+
+/* Elevated headers, dialog surface & sheet tops */
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#191611]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#110F0C]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#16130C]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#17140C]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#1D180F]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#201D17]"],
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#1A1712]"] {
+  background-color: var(--apex-card-surface) !important;
+}
+
+/* Navigation bar */
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#12100C]"] {
+  background-color: var(--apex-nav-bg) !important;
+}
+
+/* Highlight & accent texts */
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#F5D77F]"],
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#F3E5AB]"],
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#FFE58F]"],
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#FFF0B8]"] {
+  color: var(--apex-accent-bright) !important;
+}
+
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#D4AF37]"] {
+  color: var(--apex-accent) !important;
+}
+
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#EDE8D0]"] {
+  color: var(--apex-text) !important;
+}
+
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#9E9689]"],
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#C5BEAF]"],
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#8A8275]"],
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#8A8274]"],
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#A8A193]"],
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#D1C9BA]"],
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#736B5E]"],
+html[data-palette]:not([data-palette="gold"]) [class*="text-[#655E52]"] {
+  color: var(--apex-text-muted) !important;
+}
+
+/* Borders */
+html[data-palette]:not([data-palette="gold"]) [class*="border-[#D4AF37]"] {
+  border-color: var(--apex-border) !important;
+}
+
+/* Gradient buttons & primary accents */
+html[data-palette]:not([data-palette="gold"]) [class*="from-[#AA7C11]"] {
+  background-image: var(--apex-gradient-accent) !important;
+  color: var(--apex-btn-text) !important;
+}
+
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#D4AF37]"]:not([class*="/"]) {
+  background-color: var(--apex-accent) !important;
+  color: var(--apex-btn-text) !important;
+}
+
+/* Translucent accent badges */
+html[data-palette]:not([data-palette="gold"]) [class*="bg-[#D4AF37]/"] {
+  background-color: color-mix(in srgb, var(--apex-accent) 20%, transparent) !important;
+}
+
+/* Subtle gradient banner overlays */
+html[data-palette]:not([data-palette="gold"]) [class*="from-[#2A2314]"],
+html[data-palette]:not([data-palette="gold"]) [class*="from-[#211B10]"],
+html[data-palette]:not([data-palette="gold"]) [class*="from-[#262012]"],
+html[data-palette]:not([data-palette="gold"]) [class*="from-[#2B2312]"],
+html[data-palette]:not([data-palette="gold"]) [class*="from-[#2A2213]"],
+html[data-palette]:not([data-palette="gold"]) [class*="from-[#231C0E]"] {
+  background: linear-gradient(to right, var(--apex-card-surface), var(--apex-card-bg)) !important;
+}
+
+/* Glow effects & Text Gradients */
+html[data-palette]:not([data-palette="gold"]) .gold-glow {
+  box-shadow: 0 0 20px var(--apex-glow) !important;
+}
+
+html[data-palette]:not([data-palette="gold"]) .gold-glow-sm {
+  box-shadow: 0 0 10px var(--apex-glow) !important;
+}
+
+html[data-palette]:not([data-palette="gold"]) .gold-gradient-text {
+  background: var(--apex-gradient-accent) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* Ivory light mode specific adjustments */
+html[data-palette="ivory"] [class*="hover:bg-white/5"] {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+html[data-palette="ivory"] [class*="border-white/5"],
+html[data-palette="ivory"] [class*="border-white/10"],
+html[data-palette="ivory"] [class*="border-white/20"] {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+html[data-palette="ivory"] [class*="bg-black/60"],
+html[data-palette="ivory"] [class*="bg-black/70"],
+html[data-palette="ivory"] [class*="bg-black/80"] {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+}
+
+/* Luxury Gold Gradients (Default) */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FFF0B8 0%, #D4AF37 50%, #AA7C11 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #F5D77F 0%, #D4AF37 50%, #AA7C11 100%);
+}
+
+.gold-glow {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.25);
+}
+
+.gold-glow-sm {
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.18);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--apex-border, rgba(212, 175, 55, 0.2));
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--apex-accent, rgba(212, 175, 55, 0.4));
+}

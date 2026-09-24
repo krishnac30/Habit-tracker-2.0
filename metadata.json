@@ -1,0 +1,6 @@
+{
+  "name": "APEX Life OS",
+  "description": "Personal productivity PWA for iPhone tracking habits, goals, subtasks, calendar, and mood in luxury gold & black.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
