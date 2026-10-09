@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AppState, CalendarEvent, CelebrationData, Goal, Habit, MoodType, Subtask, TabType, ThemePalette, UnlockedBadge } from './types';
+import { AppState, CalendarEvent, CelebrationData, Goal, Habit, JournalEntry, MoodType, Subtask, TabType, ThemePalette, UnlockedBadge } from './types';
 import {
   calculateGoalProgress,
   calculateLevel,
@@ -19,6 +19,7 @@ import { HabitsTracker } from './components/HabitsTracker';
 import { GoalsTracker } from './components/GoalsTracker';
 import { CalendarView } from './components/CalendarView';
 import { MoodTracker } from './components/MoodTracker';
+import { JournalView } from './components/JournalView';
 import { CelebrationModal } from './components/CelebrationModal';
 import { SubtasksModal } from './components/SubtasksModal';
 import { GoalNoteModal } from './components/GoalNoteModal';
@@ -39,6 +40,8 @@ export default function App() {
   const [isAddHabitModalOpen, setIsAddHabitModalOpen] = useState<boolean>(false);
   const [isAddGoalModalOpen, setIsAddGoalModalOpen] = useState<boolean>(false);
   const [isAddEventModalOpen, setIsAddEventModalOpen] = useState<boolean>(false);
+  const [isAddJournalModalOpen, setIsAddJournalModalOpen] = useState<boolean>(false);
+  const [activeJournalTopic, setActiveJournalTopic] = useState<string | null>(null);
 
   // Goal specific modals
   const [activeSubtasksGoal, setActiveSubtasksGoal] = useState<Goal | null>(null);
@@ -613,6 +616,52 @@ export default function App() {
   };
 
   // -------------------------------------------------------------
+  // Journal Operations
+  // -------------------------------------------------------------
+  const handleAddJournalEntry = (entryData: Omit<JournalEntry, 'id' | 'timestamp'>) => {
+    const newEntry: JournalEntry = {
+      ...entryData,
+      id: `journal_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      timestamp: Date.now(),
+    };
+
+    setState(prev => ({
+      ...prev,
+      journalEntries: [newEntry, ...(prev.journalEntries || [])],
+    }));
+
+    playCompletionTick();
+  };
+
+  const handleEditJournalEntry = (updatedEntry: JournalEntry) => {
+    setState(prev => ({
+      ...prev,
+      journalEntries: (prev.journalEntries || []).map(e =>
+        e.id === updatedEntry.id ? updatedEntry : e
+      ),
+    }));
+
+    playCompletionTick();
+  };
+
+  const handleDeleteJournalEntry = (id: string) => {
+    setState(prev => ({
+      ...prev,
+      journalEntries: (prev.journalEntries || []).filter(e => e.id !== id),
+    }));
+  };
+
+  const handleTogglePinJournalEntry = (id: string) => {
+    setState(prev => ({
+      ...prev,
+      journalEntries: (prev.journalEntries || []).map(e =>
+        e.id === id ? { ...e, pinned: !e.pinned } : e
+      ),
+    }));
+    playCompletionTick();
+  };
+
+  // -------------------------------------------------------------
   // Floating + Button Click Behavior
   // -------------------------------------------------------------
   const handleFloatingAdd = () => {
@@ -623,6 +672,8 @@ export default function App() {
       setIsAddGoalModalOpen(true);
     } else if (currentTab === 'calendar') {
       setIsAddEventModalOpen(true);
+    } else if (currentTab === 'journal') {
+      setIsAddJournalModalOpen(true);
     } else {
       setIsAddHabitModalOpen(true);
     }
@@ -654,6 +705,7 @@ export default function App() {
     fresh.goals = [];
     fresh.calendarEvents = [];
     fresh.moodEntries = [];
+    fresh.journalEntries = [];
     fresh.unlockedBadges = [];
     fresh.palette = 'gold';
     fresh.stats.xp = 0;
@@ -739,6 +791,22 @@ export default function App() {
             />
           )}
 
+          {currentTab === 'journal' && (
+            <JournalView
+              entries={state.journalEntries || []}
+              goals={state.goals}
+              habits={state.habits}
+              onAddEntry={handleAddJournalEntry}
+              onEditEntry={handleEditJournalEntry}
+              onDeleteEntry={handleDeleteJournalEntry}
+              onTogglePin={handleTogglePinJournalEntry}
+              isAddModalOpen={isAddJournalModalOpen}
+              onCloseAddModal={() => setIsAddJournalModalOpen(false)}
+              activeTopic={activeJournalTopic}
+              onActiveTopicChange={setActiveJournalTopic}
+            />
+          )}
+
           {currentTab === 'calendar' && (
             <CalendarView
               state={state}
@@ -768,6 +836,7 @@ export default function App() {
               unlockedBadges={state.unlockedBadges || []}
               totalHabits={state.habits.length}
               totalGoals={state.goals.length}
+              totalJournalEntries={state.journalEntries?.length || 0}
               onOpenAchievements={() => setIsAchievementsOpen(true)}
               onOpenExport={() => setIsExportModalOpen(true)}
             />
@@ -782,6 +851,7 @@ export default function App() {
             setCurrentTab(tab);
           }}
           onFloatingAddClick={handleFloatingAdd}
+          hideFloatingAdd={currentTab === 'journal' && !!activeJournalTopic}
         />
       </div>
 

@@ -1,4 +1,4 @@
-import { AppState, Habit, Goal, CalendarEvent, MoodEntry } from '../types';
+import { AppState, Habit, Goal, CalendarEvent, MoodEntry, JournalEntry } from '../types';
 
 const STORAGE_KEY = 'apex_life_os_state_v1';
 
@@ -239,11 +239,51 @@ export function getInitialState(): AppState {
     }
   ];
 
+  const initialJournal: JournalEntry[] = [
+    {
+      id: 'j1',
+      title: 'Distributed Consensus & Raft Invariants',
+      topic: 'System Architecture',
+      date: today,
+      time: '09:45',
+      timestamp: Date.now() - 3 * 3600 * 1000,
+      pinned: true,
+      tags: ['distributed-systems', 'consensus', 'fault-tolerance'],
+      insights: [
+        'Randomized election timeouts (150-300ms) elegantly avoid split-vote deadlocks in cluster topologies.',
+        'Log matching invariant: If two logs contain an entry with the same index and term, they are identical up to that point.'
+      ],
+      readTimeMinutes: 2,
+      energy: 'breakthrough',
+      linkedGoalId: 'g2',
+      content: `## Core Takeaways on Raft vs Multi-Paxos\n\nStudied leader election and state machine replication today. Raft decomposes consensus into three discrete sub-problems:\n\n1. **Leader Election**: Heartbeat triggers reset countdown; timeouts trigger candidate state.\n2. **Log Replication**: Leader receives commands, appends to local log, and broadcasts AppendEntries RPCs.\n3. **Safety Guarantee**: State machine safety dictates that if a server applies a log entry at index $i$, no other server can apply a different log entry for that index.\n\n> Key Architecture Rule: Logs are strictly append-only. Follower nodes never rewrite committed leader entries.`
+    },
+    {
+      id: 'j2',
+      title: 'Dopamine Dynamics & Identity-Based Habit Loops',
+      topic: 'Neurobiology & Focus',
+      date: yesterdayStr,
+      time: '15:20',
+      timestamp: Date.now() - 86400000 + 4 * 3600 * 1000,
+      pinned: false,
+      tags: ['habits', 'dopamine', 'psychology'],
+      insights: [
+        'Dopamine spikes in expectation/anticipation of reward, not upon consumption.',
+        'Reduce physical activation friction for positive loops to under 20 seconds.'
+      ],
+      readTimeMinutes: 2,
+      energy: 'concept',
+      linkedHabitId: 'h2',
+      content: `## Dopamine Baselines & Friction Inversion\n\nNotes from research paper on tonic vs phasic dopamine transmission:\n\n- **Tonic baseline** dictates overall motivation and emotional resilience.\n- **Phasic bursts** occur during novelty or cue recognition.\n- High-intensity rewards cause subsequent dopamine baseline dips below the previous resting point.\n\n### Application to Habit Compounding\nStructure work intervals with progressive friction reduction. Prepare reading materials and workspace the night before so morning executive function isn't spent on context switching.`
+    }
+  ];
+
   return {
     habits: initialHabits,
     goals: initialGoals,
     calendarEvents: initialEvents,
     moodEntries: initialMoods,
+    journalEntries: initialJournal,
     stats: {
       xp: 285,
       level: 1,
@@ -265,10 +305,12 @@ export function loadState(): AppState {
     if (!raw) return getInitialState();
     const parsed = JSON.parse(raw) as AppState;
     if (!parsed || !Array.isArray(parsed.habits)) return getInitialState();
+    const initial = getInitialState();
     return {
       ...parsed,
       palette: parsed.palette || 'gold',
       unlockedBadges: Array.isArray(parsed.unlockedBadges) ? parsed.unlockedBadges : [],
+      journalEntries: Array.isArray(parsed.journalEntries) ? parsed.journalEntries : initial.journalEntries,
     };
   } catch (err) {
     console.error('Failed to load state from localStorage:', err);

@@ -1,4 +1,4 @@
-import { AppState } from '../types';
+import { AppState, JournalEntry } from '../types';
 
 export function downloadFile(content: string, fileName: string, contentType: string) {
   const blob = new Blob([content], { type: contentType });
@@ -19,7 +19,7 @@ export function exportJSON(state: AppState) {
 }
 
 export function exportCSV(state: AppState) {
-  // Habits sheet + Goals sheet in combined CSV format
+  // Habits sheet + Goals sheet + Journal sheet in combined CSV format
   const rows: string[] = [];
 
   rows.push('--- HABITS ---');
@@ -55,9 +55,110 @@ export function exportCSV(state: AppState) {
     ].join(','));
   });
 
+  if (state.journalEntries && state.journalEntries.length > 0) {
+    rows.push('');
+    rows.push('--- JOURNAL & LEARNING NOTES ---');
+    rows.push('ID,Date,Time,Topic,Title,WordCount,ReadTimeMin,Energy,Pinned,Tags,Insights,Content');
+    state.journalEntries.forEach(j => {
+      const wordCount = j.content.trim().split(/\s+/).filter(Boolean).length;
+      rows.push([
+        `"${j.id}"`,
+        `"${j.date}"`,
+        `"${j.time || ''}"`,
+        `"${(j.topic || '').replace(/"/g, '""')}"`,
+        `"${(j.title || '').replace(/"/g, '""')}"`,
+        wordCount,
+        j.readTimeMinutes || Math.max(1, Math.ceil(wordCount / 200)),
+        `"${j.energy || ''}"`,
+        j.pinned ? 'YES' : 'NO',
+        `"${(j.tags || []).join(';')}"`,
+        `"${(j.insights || []).join(' | ').replace(/"/g, '""')}"`,
+        `"${j.content.replace(/"/g, '""').replace(/\r?\n/g, '\\n')}"`
+      ].join(','));
+    });
+  }
+
   const csvContent = rows.join('\r\n');
   const dateStr = new Date().toISOString().slice(0, 10);
-  downloadFile(csvContent, `apex-habits-and-goals-${dateStr}.csv`, 'text/csv;charset=utf-8;');
+  downloadFile(csvContent, `apex-life-os-export-${dateStr}.csv`, 'text/csv;charset=utf-8;');
+}
+
+export function exportJournalMarkdown(entries: JournalEntry[], title = 'APEX Journal & Learning Documentation') {
+  const sorted = [...entries].sort((a, b) => b.timestamp - a.timestamp);
+  const dateStr = new Date().toISOString().slice(0, 10);
+
+  const lines: string[] = [];
+  lines.push(`# ${title}`);
+  lines.push(`*Generated on ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} · ${sorted.length} entries*\n`);
+  lines.push(`---`);
+  lines.push(`## Table of Contents`);
+  sorted.forEach((e, idx) => {
+    lines.push(`${idx + 1}. [${e.title || 'Untitled Note'}](#${(e.title || 'untitled').toLowerCase().replace(/[^a-z0-9]+/g, '-')}) — *${e.topic} (${e.date})*`);
+  });
+  lines.push(`\n---\n`);
+
+  sorted.forEach((e) => {
+    const wordCount = e.content.trim().split(/\s+/).filter(Boolean).length;
+    const readMin = e.readTimeMinutes || Math.max(1, Math.ceil(wordCount / 200));
+
+    lines.push(`## ${e.title || 'Untitled Note'}`);
+    lines.push(`**Date & Time:** ${e.date} at ${e.time || '12:00'} · **Topic:** \`${e.topic}\` · **Read Time:** ~${readMin} min (${wordCount} words)`);
+    if (e.pinned) {
+      lines.push(`> 🌟 **Key Breakthrough / Starred Note**`);
+    }
+    if (e.tags && e.tags.length > 0) {
+      lines.push(`**Tags:** ${e.tags.map(t => `#${t.replace(/^#/, '')}`).join(' ')}`);
+    }
+
+    if (e.insights && e.insights.length > 0) {
+      lines.push(`\n### Key Takeaways & Insights`);
+      e.insights.forEach(ins => {
+        lines.push(`- 💡 ${ins}`);
+      });
+    }
+
+    lines.push(`\n### Notes & Analysis`);
+    lines.push(`${e.content.trim()}\n`);
+    lines.push(`---\n`);
+  });
+
+  const content = lines.join('\n');
+  downloadFile(content, `apex-journal-documentation-${dateStr}.md`, 'text/markdown;charset=utf-8;');
+}
+
+export function exportJournalCSV(entries: JournalEntry[]) {
+  const rows: string[] = [];
+  rows.push('ID,Date,Time,Timestamp,Topic,Title,WordCount,ReadTimeMin,Energy,Pinned,Tags,Insights,Content');
+
+  const sorted = [...entries].sort((a, b) => b.timestamp - a.timestamp);
+  sorted.forEach(j => {
+    const wordCount = j.content.trim().split(/\s+/).filter(Boolean).length;
+    rows.push([
+      `"${j.id}"`,
+      `"${j.date}"`,
+      `"${j.time || ''}"`,
+      j.timestamp,
+      `"${(j.topic || '').replace(/"/g, '""')}"`,
+      `"${(j.title || '').replace(/"/g, '""')}"`,
+      wordCount,
+      j.readTimeMinutes || Math.max(1, Math.ceil(wordCount / 200)),
+      `"${j.energy || ''}"`,
+      j.pinned ? 'YES' : 'NO',
+      `"${(j.tags || []).join(';')}"`,
+      `"${(j.insights || []).join(' | ').replace(/"/g, '""')}"`,
+      `"${j.content.replace(/"/g, '""').replace(/\r?\n/g, '\\n')}"`
+    ].join(','));
+  });
+
+  const csvContent = rows.join('\r\n');
+  const dateStr = new Date().toISOString().slice(0, 10);
+  downloadFile(csvContent, `apex-journal-analytics-${dateStr}.csv`, 'text/csv;charset=utf-8;');
+}
+
+export function exportJournalJSON(entries: JournalEntry[]) {
+  const jsonStr = JSON.stringify(entries, null, 2);
+  const dateStr = new Date().toISOString().slice(0, 10);
+  downloadFile(jsonStr, `apex-journal-data-${dateStr}.json`, 'application/json');
 }
 
 export function exportMoodTXT(state: AppState) {

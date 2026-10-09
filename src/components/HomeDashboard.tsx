@@ -17,7 +17,7 @@ import { IconRenderer } from './IconRenderer';
 interface HomeDashboardProps {
   state: AppState;
   onToggleHabit: (habitId: string) => void;
-  onNavigateTab: (tab: 'habits' | 'goals' | 'calendar' | 'mood') => void;
+  onNavigateTab: (tab: 'habits' | 'goals' | 'calendar' | 'mood' | 'journal') => void;
   onOpenExport?: () => void;
   onOpenAchievements?: () => void;
   onOpenPalettes?: () => void;

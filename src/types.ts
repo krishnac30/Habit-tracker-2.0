@@ -1,6 +1,27 @@
-export type TabType = 'home' | 'habits' | 'goals' | 'calendar' | 'mood' | 'settings';
+export type TabType = 'home' | 'habits' | 'goals' | 'journal' | 'calendar' | 'mood' | 'settings';
 
 export type MoodType = 'great' | 'good' | 'okay' | 'low' | 'rough';
+
+export type JournalEnergy = 'breakthrough' | 'concept' | 'reflective' | 'action_item';
+
+export interface JournalEntry {
+  id: string;
+  title: string;
+  topic: string; // e.g. "System Architecture", "Neurobiology", "Frontend Performance"
+  content: string; // Prose / Markdown notes
+  date: string; // YYYY-MM-DD
+  time: string; // HH:MM (24-hour format e.g. "14:30")
+  timestamp: number; // Unix epoch ms
+  pinned?: boolean;
+  tags?: string[];
+  insights?: string[]; // Highlighted takeaways / bullet insights
+  images?: string[]; // Base64 data URLs or image URLs
+  readTimeMinutes?: number;
+  energy?: JournalEnergy;
+  linkedGoalId?: string;
+  linkedHabitId?: string;
+  updatedAt?: number;
+}
 
 export interface MoodEntry {
   id: string;
@@ -100,6 +121,7 @@ export interface AppState {
   goals: Goal[];
   calendarEvents: CalendarEvent[];
   moodEntries: MoodEntry[];
+  journalEntries: JournalEntry[];
   stats: UserStats;
   theme: 'dark' | 'light';
   palette: ThemePalette;

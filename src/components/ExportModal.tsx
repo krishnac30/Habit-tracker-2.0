@@ -110,7 +110,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                 Data Vault & Persistence
               </h3>
               <p className="text-[11px] text-[#9E9689]">
-                100% Offline · Stored Locally on Your Device
+                100% Offline · {state.habits.length} Habits · {state.goals.length} Goals · {state.journalEntries?.length || 0} Journal Notes
               </p>
             </div>
           </div>

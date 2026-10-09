@@ -36,6 +36,7 @@ interface SettingsViewProps {
   unlockedBadges: UnlockedBadge[];
   totalHabits: number;
   totalGoals: number;
+  totalJournalEntries?: number;
   onOpenAchievements: () => void;
   onOpenExport: () => void;
 }
@@ -51,6 +52,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   unlockedBadges,
   totalHabits,
   totalGoals,
+  totalJournalEntries = 0,
   onOpenAchievements,
   onOpenExport,
 }) => {
@@ -348,7 +350,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             APEX Life OS
           </span>
           <p className="text-[10px] text-[#8A8275] mt-0.5 font-mono">
-            v2.4 Executive Edition • {totalHabits} Habits • {totalGoals} Goals
+            v2.5 Executive Edition • {totalHabits} Habits • {totalGoals} Goals • {totalJournalEntries} Journal Notes
           </p>
         </div>
       </div>
